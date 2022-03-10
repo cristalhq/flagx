@@ -24,3 +24,17 @@ func TestFlagSet(t *testing.T) {
 		t.Fatalf("got %v want %v", names, want)
 	}
 }
+
+func failIfErr(t testing.TB, err error) {
+	t.Helper()
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func mustEqual(t testing.TB, got, want interface{}) {
+	t.Helper()
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("got %v, want %v", got, want)
+	}
+}
