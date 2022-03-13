@@ -9,8 +9,12 @@ import (
 )
 
 func TestFlagSet(t *testing.T) {
+	var ids []int
+	wantIDs := []int{1, 2, 3}
+
 	fset := NewFlagSet("testing", os.Stderr)
 	_ = fset.Duration("timeout", "t", 10*time.Second, "just a timeout")
+	fset.IntSliceVar(&ids, "ids", "", wantIDs, "just a timeout")
 
 	names := map[string]struct{}{}
 	fs := fset.AsStdlib()
@@ -19,10 +23,14 @@ func TestFlagSet(t *testing.T) {
 	})
 
 	want := map[string]struct{}{
-		"timeout": {}, "t": {},
+		"timeout": {}, "t": {}, "ids": {},
 	}
 	if !reflect.DeepEqual(names, want) {
 		t.Fatalf("got %v want %v", names, want)
+	}
+
+	if !reflect.DeepEqual(ids, wantIDs) {
+		t.Fatalf("got %v want %v", want, wantIDs)
 	}
 }
 
