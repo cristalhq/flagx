@@ -12,32 +12,51 @@ type FlagSet struct {
 }
 
 // NewFlagSet returns new FlagSet.
-func NewFlagSet(name string) *FlagSet {
-	return &FlagSet{fs: flag.NewFlagSet(name, flag.ContinueOnError)}
+func NewFlagSet(name string, output io.Writer) *FlagSet {
+	fs := flag.NewFlagSet(name, flag.ContinueOnError)
+	fs.SetOutput(output)
+
+	return &FlagSet{fs: fs}
 }
 
-// AsStdlibFlagSet returns *flag.FlagSet with all flags.
-func (fs *FlagSet) AsStdlibFlagSet() *flag.FlagSet {
+// AsStdlib returns *flag.FlagSet with all flags.
+func (fs *FlagSet) AsStdlib() *flag.FlagSet {
 	return fs.fs
 }
 
-func (f *FlagSet) Output() io.Writer                                  { return f.fs.Output() }
-func (f *FlagSet) Name() string                                       { return f.fs.Name() }
-func (f *FlagSet) ErrorHandling() flag.ErrorHandling                  { return f.fs.ErrorHandling() }
-func (f *FlagSet) SetOutput(output io.Writer)                         { f.fs.SetOutput(output) }
-func (f *FlagSet) VisitAll(fn func(*flag.Flag))                       { f.fs.VisitAll(fn) }
-func (f *FlagSet) Visit(fn func(*flag.Flag))                          { f.fs.Visit(fn) }
-func (f *FlagSet) Lookup(name string) *flag.Flag                      { return f.fs.Lookup(name) }
-func (f *FlagSet) Set(name, value string) error                       { return f.fs.Set(name, value) }
-func (f *FlagSet) Parse(arguments []string) error                     { return f.fs.Parse(arguments) }
-func (f *FlagSet) Parsed() bool                                       { return f.fs.Parsed() }
-func (f *FlagSet) Init(name string, errorHandling flag.ErrorHandling) { f.fs.Init(name, errorHandling) }
-func (f *FlagSet) PrintDefaults()                                     { f.fs.PrintDefaults() }
-func (f *FlagSet) NFlag() int                                         { return f.fs.NFlag() }
-func (f *FlagSet) Arg(i int) string                                   { return f.fs.Arg(i) }
-func (f *FlagSet) NArg() int                                          { return f.fs.NArg() }
-func (f *FlagSet) Args() []string                                     { return f.Args() }
+// func (f *FlagSet) Output() io.Writer { return f.fs.Output() }
+// func (f *FlagSet) ErrorHandling() flag.ErrorHandling { return f.fs.ErrorHandling() }
+// func (f *FlagSet) SetOutput(output io.Writer)     { f.fs.SetOutput(output) }
+// func (f *FlagSet) Name() string     { return f.fs.Name() }
 
+// NFlag returns the number of flags that have been set.
+func (f *FlagSet) NFlag() int { return f.fs.NFlag() }
+
+// NArg is the number of arguments remaining after flags have been processed.
+func (f *FlagSet) NArg() int { return f.fs.NArg() }
+
+// Arg returns the i'th argument. Arg(0) is the first remaining argument
+// after flags have been processed. Arg returns an empty string if the
+// requested element does not exist.
+func (f *FlagSet) Arg(i int) string { return f.fs.Arg(i) }
+
+// Args returns the non-flag arguments.
+func (f *FlagSet) Args() []string { return f.fs.Args() }
+
+// IsParsed reports whether f.Parse has been called.
+func (f *FlagSet) IsParsed() bool { return f.fs.Parsed() }
+
+// Parse parses flag definitions from the argument list, which should not
+// include the command name. Must be called after all flags in the FlagSet
+// are defined and before flags are accessed by the program.
+// The return value will be ErrHelp if -help or -h were set but not defined.
+func (f *FlagSet) Parse(arguments []string) error { return f.fs.Parse(arguments) }
+
+func (f *FlagSet) PrintDefaults()                { f.fs.PrintDefaults() }
+func (f *FlagSet) VisitAll(fn func(*flag.Flag))  { f.fs.VisitAll(fn) }
+func (f *FlagSet) Visit(fn func(*flag.Flag))     { f.fs.Visit(fn) }
+func (f *FlagSet) Lookup(name string) *flag.Flag { return f.fs.Lookup(name) }
+func (f *FlagSet) Set(name, value string) error  { return f.fs.Set(name, value) }
 
 // BoolVar defines a bool flag with specified name, alias, default value, and usage string.
 // The argument p points to a bool variable in which to store the value of the flag.

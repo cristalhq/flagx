@@ -1,6 +1,7 @@
 package flagx_test
 
 import (
+	"os"
 	"testing"
 	"time"
 
@@ -8,7 +9,7 @@ import (
 )
 
 func ExampleFlagSet(t *testing.T) {
-	fset := flagx.NewFlagSet("testing")
+	fset := flagx.NewFlagSet("testing", os.Stderr)
 	d := fset.Duration("timeout", "t", 10*time.Second, "just a timeout")
 
 	err := fset.Parse([]string{"-t", "20s"})

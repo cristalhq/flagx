@@ -2,17 +2,18 @@ package flagx
 
 import (
 	"flag"
+	"os"
 	"reflect"
 	"testing"
 	"time"
 )
 
 func TestFlagSet(t *testing.T) {
-	fset := NewFlagSet("testing")
+	fset := NewFlagSet("testing", os.Stderr)
 	_ = fset.Duration("timeout", "t", 10*time.Second, "just a timeout")
 
 	names := map[string]struct{}{}
-	fs := fset.AsStdlibFlagSet()
+	fs := fset.AsStdlib()
 	fs.VisitAll(func(f *flag.Flag) {
 		names[f.Name] = struct{}{}
 	})
