@@ -9,15 +9,16 @@ import (
 )
 
 func TestFlagSet(t *testing.T) {
+	var d time.Duration
 	var ids []int
 	wantIDs := []int{1, 2, 3}
 	var offsets map[float64]struct{}
 	wantOffsets := map[float64]struct{}{1: {}, 2: {}, 3: {}}
 
 	fset := NewFlagSet("testing", os.Stderr)
-	_ = fset.Duration("timeout", "t", 10*time.Second, "just a timeout")
-	fset.IntSliceVar(&ids, "ids", "", wantIDs, "just a timeout")
-	fset.Float64SetVar(&offsets, "offsets", "", wantOffsets, "just a timeout")
+	fset.Duration(&d, "timeout", "t", 10*time.Second, "just a timeout")
+	fset.IntSlice(&ids, "ids", "", wantIDs, "just a timeout")
+	fset.Float64Set(&offsets, "offsets", "", wantOffsets, "just a timeout")
 
 	names := map[string]struct{}{}
 	fs := fset.AsStdlib()
