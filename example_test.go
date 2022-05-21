@@ -22,6 +22,8 @@ func ExampleFlagSet() {
 	if d != 20*time.Second {
 		panic(fmt.Sprintf("got %v want %v", d, 20*time.Second))
 	}
+
+	// Output:
 }
 
 func ExampleTextVar() {
