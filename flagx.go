@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// FlagSet represents a set of defined flags.
+// FlagSet represents a set of flags.
 // Flag names must be unique within a FlagSet.
 // An attempt to define a flag whose name is already in use will cause a panic.
 type FlagSet struct {
@@ -21,8 +21,9 @@ func NewFlagSet(name string, output io.Writer) *FlagSet {
 }
 
 // AsStdlib returns *flag.FlagSet with all flags.
-func (fs *FlagSet) AsStdlib() *flag.FlagSet {
-	return fs.fs
+// Note: alias are duplicated.
+func (f *FlagSet) AsStdlib() *flag.FlagSet {
+	return f.fs
 }
 
 // NFlag returns the number of flags that have been set.
@@ -61,7 +62,7 @@ func (f *FlagSet) Set(name, value string) error  { return f.fs.Set(name, value) 
 // of strings by giving the slice the methods of Value; in particular, Set would
 // decompose the comma-separated string into the slice.
 // Empty string for alias means no alias will be created.
-func (f *FlagSet) Var(value flag.Value, name, alias string, usage string) {
+func (f *FlagSet) Var(value flag.Value, name, alias, usage string) {
 	f.fs.Var(value, name, usage)
 	if alias != "" {
 		f.fs.Var(value, alias, usage)
@@ -132,7 +133,7 @@ func (f *FlagSet) Uint64(p *uint64, name, alias string, value uint64, usage stri
 // String defines a string flag with specified name, alias, default value, and usage string.
 // The argument p points to a string variable in which to store the value of the flag.
 // Empty string for alias means no alias will be created.
-func (f *FlagSet) String(p *string, name, alias string, value string, usage string) {
+func (f *FlagSet) String(p *string, name, alias, value, usage string) {
 	f.fs.StringVar(p, name, value, usage)
 	if alias != "" {
 		f.fs.StringVar(p, alias, value, usage)
