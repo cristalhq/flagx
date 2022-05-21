@@ -13,11 +13,12 @@ type SliceOfBool []bool
 func (sb *SliceOfBool) Set(v string) error {
 	var bools []bool
 	for i, v := range strings.Split(v, ",") {
-		if v == "true" || v == "t" || v == "yes" || v == "y" {
+		switch v {
+		case "true", "t", "yes", "y":
 			bools = append(bools, true)
-		} else if v == "false" || v == "f" || v == "no" || v == "n" {
+		case "false", "f", "no", "n":
 			bools = append(bools, false)
-		} else {
+		default:
 			return fmt.Errorf("unknown bool at %d: %s", i, v)
 		}
 	}
