@@ -28,7 +28,7 @@ go get github.com/cristalhq/flagx
 ## Example
 
 ```go
-args := []string{"-t", "20s"}
+args := []string{"-t", "20s"} // or os.Args[1:]
 
 var d time.Duration
 fset := flagx.NewFlagSet("testing", os.Stderr)
