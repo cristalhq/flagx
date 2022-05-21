@@ -122,8 +122,13 @@ func (su *SetOfUint64) String() string {
 type SetOfString map[string]struct{}
 
 // Set is flag.Value.Set
+// TODO(cristaloleg): how to configure separator? , \t |
 func (ss *SetOfString) Set(v string) error {
-	// TODO: how to configure separator? , \t |
+	strs := make(map[string]struct{})
+	for _, s := range strings.Split(v, ",") {
+		strs[s] = struct{}{}
+	}
+	*ss = SetOfString(strs)
 	return nil
 }
 

@@ -98,9 +98,18 @@ func TestSetUint64_Bad(t *testing.T) {
 }
 
 func TestSetString(t *testing.T) {
-}
+	mustEqual(t, (*SetOfString)(nil).String(), "")
 
-func TestSetString_Bad(t *testing.T) {
+	var ss SetOfString
+	err := ss.Set("1,2e20,3.78,rabbit,-4.20")
+	failIfErr(t, err)
+
+	want := map[string]struct{}{"1": {}, "2e20": {}, "3.78": {}, "rabbit": {}, "-4.20": {}}
+	mustEqual(t, map[string]struct{}(ss), want)
+
+	str := ss.String()
+	wantStr := "-4.20,1,2e20,3.78,rabbit"
+	mustEqual(t, str, wantStr)
 }
 
 func TestSetFloat64(t *testing.T) {

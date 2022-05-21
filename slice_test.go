@@ -121,9 +121,18 @@ func TestSliceUint64_Bad(t *testing.T) {
 }
 
 func TestSliceString(t *testing.T) {
-}
+	mustEqual(t, (*SliceOfString)(nil).String(), "")
 
-func TestSliceString_Bad(t *testing.T) {
+	var ss SliceOfString
+	err := ss.Set("1,2e20,3.78,rabbit,-4.20")
+	failIfErr(t, err)
+
+	want := []string{"1", "2e20", "3.78", "rabbit", "-4.20"}
+	mustEqual(t, []string(ss), want)
+
+	str := ss.String()
+	wantStr := "1,2e20,3.78,rabbit,-4.20"
+	mustEqual(t, str, wantStr)
 }
 
 func TestSliceFloat64(t *testing.T) {

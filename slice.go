@@ -152,8 +152,9 @@ func (su *SliceOfUint64) String() string {
 type SliceOfString []string
 
 // Set is flag.Value.Set
+// TODO(cristaloleg): how to configure separator? , \t |
 func (ss *SliceOfString) Set(v string) error {
-	// TODO: how to configure separator? , \t |
+	*ss = SliceOfString(strings.Split(v, ","))
 	return nil
 }
 
