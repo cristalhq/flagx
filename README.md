@@ -28,13 +28,20 @@ go get github.com/cristalhq/flagx
 ## Example
 
 ```go
-fset := flagx.NewFlagSet("testing")
-d := fset.Duration("timeout", "t", 10*time.Second, "just a timeout")
+args := []string{"-t", "20s"}
 
-err := fset.Parse([]string{"-t", "20s"})
+var d time.Duration
+fset := flagx.NewFlagSet("testing", os.Stderr)
+fset.Duration(&d, "timeout", "t", 10*time.Second, "just a timeout")
+
+err := fset.Parse(args)
 if err != nil {
 	panic(err)
 }
+
+fmt.Println(d)
+
+// Output: 20s
 ```
 
 Also see examples: [examples_test.go](https://github.com/cristalhq/flagx/blob/main/example_test.go).
