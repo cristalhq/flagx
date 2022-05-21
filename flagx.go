@@ -1,6 +1,7 @@
 package flagx
 
 import (
+	"encoding"
 	"flag"
 	"io"
 	"time"
@@ -77,6 +78,20 @@ func (f *FlagSet) Func(name, alias, usage string, fn func(string) error) {
 	f.fs.Func(name, usage, fn)
 	if alias != "" {
 		f.fs.Func(name, alias, fn)
+	}
+}
+
+// Text defines a flag with the specified name and usage string.
+// The argument p must be a pointer to a variable that will hold the value
+// of the flag, and p must implement encoding.TextUnmarshaler.
+// If the flag is used, the flag value will be passed to p's UnmarshalText method.
+// The type of the default value must be the same as the type of p.
+// Empty string for alias means no alias will be created.
+func (f *FlagSet) Text(p encoding.TextUnmarshaler, name, alias string, value encoding.TextMarshaler, usage string) {
+	// TODO(cristaloleg): for Go 1.19 this can be f.fs.TextVar(...)
+	f.fs.Var(newTextValue(value, p), name, usage)
+	if alias != "" {
+		f.fs.Var(newTextValue(value, p), alias, usage)
 	}
 }
 
