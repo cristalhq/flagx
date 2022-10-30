@@ -1,6 +1,7 @@
 package flagx
 
 import (
+	"bytes"
 	"flag"
 	"os"
 	"reflect"
@@ -32,6 +33,17 @@ func TestFlagSet(t *testing.T) {
 	mustEqual(t, names, want)
 	mustEqual(t, ids, wantIDs)
 	mustEqual(t, offsets, wantOffsets)
+}
+
+func TestFlagSet_PrintDefaults(t *testing.T) {
+	const usage = `  -timeout (-t) duration
+    	just a timeout (default 10s)
+`
+	var buf bytes.Buffer
+	fset := NewFlagSet("testing", &buf)
+	fset.Duration(new(time.Duration), "timeout", "t", 10*time.Second, "just a timeout")
+	fset.PrintDefaults()
+	mustEqual(t, buf.String(), usage)
 }
 
 func failIfErr(t testing.TB, err error) {
