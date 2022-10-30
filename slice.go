@@ -7,214 +7,214 @@ import (
 	"time"
 )
 
-type SliceOfBool []bool
+type boolSlice struct {
+	sep   string
+	value *[]bool
+}
 
-// Set is flag.Value.Set
-func (sb *SliceOfBool) Set(v string) error {
+// Set implements the flag.Value interface.
+func (s boolSlice) Set(str string) error {
 	var bools []bool
-	for i, v := range strings.Split(v, ",") {
-		switch v {
-		case "true", "t", "yes", "y":
-			bools = append(bools, true)
-		case "false", "f", "no", "n":
-			bools = append(bools, false)
-		default:
-			return fmt.Errorf("unknown bool at %d: %s", i, v)
+	for _, v := range strings.Split(str, s.sep) {
+		b, err := strconv.ParseBool(v)
+		if err != nil {
+			return fmt.Errorf("parsing bool: %w", err)
 		}
+		bools = append(bools, b)
 	}
-	*sb = SliceOfBool(bools)
+	*s.value = bools
 	return nil
 }
 
-func (sb *SliceOfBool) String() string {
-	if sb == nil {
-		return ""
+// String implements the flag.Value interface.
+func (s boolSlice) String() string {
+	res := make([]string, len(*s.value))
+	for i, v := range *s.value {
+		res[i] = strconv.FormatBool(v)
 	}
-	res := make([]string, len(*sb))
-	for i, v := range []bool(*sb) {
-		if v {
-			res[i] = "true"
-		} else {
-			res[i] = "false"
-		}
-	}
-	return strings.Join(res, ",")
+	return strings.Join(res, s.sep)
 }
 
-type SliceOfInt []int
+type intSlice struct {
+	sep   string
+	value *[]int
+}
 
-// Set is flag.Value.Set
-func (si *SliceOfInt) Set(v string) error {
+// Set implements the flag.Value interface.
+func (s intSlice) Set(str string) error {
 	var ints []int
-	for _, v := range strings.Split(v, ",") {
+	for _, v := range strings.Split(str, s.sep) {
 		i, err := strconv.ParseInt(v, 10, 64)
 		if err != nil {
-			return err
+			return fmt.Errorf("parsing int: %w", err)
 		}
 		ints = append(ints, int(i))
 	}
-	*si = SliceOfInt(ints)
+	*s.value = ints
 	return nil
 }
 
-func (si *SliceOfInt) String() string {
-	if si == nil {
-		return ""
-	}
-	res := make([]string, len(*si))
-	for i, v := range *si {
+// String implements the flag.Value interface.
+func (s intSlice) String() string {
+	res := make([]string, len(*s.value))
+	for i, v := range *s.value {
 		res[i] = strconv.FormatInt(int64(v), 10)
 	}
-	return strings.Join(res, ",")
+	return strings.Join(res, s.sep)
 }
 
-type SliceOfInt64 []int64
+type int64Slice struct {
+	sep   string
+	value *[]int64
+}
 
-// Set is flag.Value.Set
-func (si *SliceOfInt64) Set(v string) error {
+// Set implements the flag.Value interface.
+func (s int64Slice) Set(str string) error {
 	var ints []int64
-	for _, v := range strings.Split(v, ",") {
+	for _, v := range strings.Split(str, s.sep) {
 		i, err := strconv.ParseInt(v, 10, 64)
 		if err != nil {
-			return err
+			return fmt.Errorf("parsing int: %w", err)
 		}
 		ints = append(ints, i)
 	}
-	*si = SliceOfInt64(ints)
+	*s.value = ints
 	return nil
 }
 
-func (si *SliceOfInt64) String() string {
-	if si == nil {
-		return ""
-	}
-	res := make([]string, len(*si))
-	for i, v := range *si {
+// String implements the flag.Value interface.
+func (s int64Slice) String() string {
+	res := make([]string, len(*s.value))
+	for i, v := range *s.value {
 		res[i] = strconv.FormatInt(v, 10)
 	}
-	return strings.Join(res, ",")
+	return strings.Join(res, s.sep)
 }
 
-type SliceOfUint []uint
+type uintSlice struct {
+	sep   string
+	value *[]uint
+}
 
-// Set is flag.Value.Set
-func (su *SliceOfUint) Set(v string) error {
-	var ints []uint
-	for _, v := range strings.Split(v, ",") {
+// Set implements the flag.Value interface.
+func (s uintSlice) Set(str string) error {
+	var uints []uint
+	for _, v := range strings.Split(str, s.sep) {
 		i, err := strconv.ParseUint(v, 10, 64)
 		if err != nil {
-			return err
+			return fmt.Errorf("parsing uint: %w", err)
 		}
-		ints = append(ints, uint(i))
+		uints = append(uints, uint(i))
 	}
-	*su = SliceOfUint(ints)
+	*s.value = uints
 	return nil
 }
 
-func (su *SliceOfUint) String() string {
-	if su == nil {
-		return ""
-	}
-	res := make([]string, len(*su))
-	for i, v := range *su {
+// String implements the flag.Value interface.
+func (s uintSlice) String() string {
+	res := make([]string, len(*s.value))
+	for i, v := range *s.value {
 		res[i] = strconv.FormatUint(uint64(v), 10)
 	}
-	return strings.Join(res, ",")
+	return strings.Join(res, s.sep)
 }
 
-type SliceOfUint64 []uint64
+type uint64Slice struct {
+	sep   string
+	value *[]uint64
+}
 
-// Set is flag.Value.Set
-func (su *SliceOfUint64) Set(v string) error {
-	var ints []uint64
-	for _, v := range strings.Split(v, ",") {
+// Set implements the flag.Value interface.
+func (s uint64Slice) Set(str string) error {
+	var uints []uint64
+	for _, v := range strings.Split(str, s.sep) {
 		i, err := strconv.ParseUint(v, 10, 64)
 		if err != nil {
-			return err
+			return fmt.Errorf("parsing uint: %w", err)
 		}
-		ints = append(ints, i)
+		uints = append(uints, i)
 	}
-	*su = SliceOfUint64(ints)
+	*s.value = uints
 	return nil
 }
 
-func (su *SliceOfUint64) String() string {
-	if su == nil {
-		return ""
-	}
-	res := make([]string, len(*su))
-	for i, v := range *su {
+// String implements the flag.Value interface.
+func (s uint64Slice) String() string {
+	res := make([]string, len(*s.value))
+	for i, v := range *s.value {
 		res[i] = strconv.FormatUint(v, 10)
 	}
-	return strings.Join(res, ",")
+	return strings.Join(res, s.sep)
 }
 
-type SliceOfString []string
+type stringSlice struct {
+	sep   string
+	value *[]string
+}
 
-// Set is flag.Value.Set
-// TODO(cristaloleg): how to configure separator? , \t |
-func (ss *SliceOfString) Set(v string) error {
-	*ss = SliceOfString(strings.Split(v, ","))
+// Set implements the flag.Value interface.
+func (s stringSlice) Set(str string) error {
+	*s.value = strings.Split(str, s.sep)
 	return nil
 }
 
-func (ss *SliceOfString) String() string {
-	if ss == nil {
-		return ""
-	}
-	return strings.Join([]string(*ss), ",")
+// String implements the flag.Value interface.
+func (s stringSlice) String() string {
+	return strings.Join(*s.value, s.sep)
 }
 
-type SliceOfFloat64 []float64
+type float64Slice struct {
+	sep   string
+	value *[]float64
+}
 
-// Set is flag.Value.Set
-func (sf *SliceOfFloat64) Set(v string) error {
+// Set implements the flag.Value interface.
+func (s float64Slice) Set(str string) error {
 	var floats []float64
-	for _, v := range strings.Split(v, ",") {
+	for _, v := range strings.Split(str, s.sep) {
 		f, err := strconv.ParseFloat(v, 64)
 		if err != nil {
-			return err
+			return fmt.Errorf("parsing float: %w", err)
 		}
 		floats = append(floats, f)
 	}
-	*sf = SliceOfFloat64(floats)
+	*s.value = floats
 	return nil
 }
 
-func (sf *SliceOfFloat64) String() string {
-	if sf == nil {
-		return ""
-	}
-	res := make([]string, len(*sf))
-	for i, v := range *sf {
+// String implements the flag.Value interface.
+func (s float64Slice) String() string {
+	res := make([]string, len(*s.value))
+	for i, v := range *s.value {
 		res[i] = strconv.FormatFloat(v, 'g', 10, 64)
 	}
-	return strings.Join(res, ",")
+	return strings.Join(res, s.sep)
 }
 
-type SliceOfDuration []time.Duration
+type durationSlice struct {
+	sep   string
+	value *[]time.Duration
+}
 
-// Set is flag.Value.Set
-func (sd *SliceOfDuration) Set(v string) error {
+// Set implements the flag.Value interface.
+func (s durationSlice) Set(str string) error {
 	var durs []time.Duration
-	for _, v := range strings.Split(v, ",") {
+	for _, v := range strings.Split(str, s.sep) {
 		d, err := time.ParseDuration(v)
 		if err != nil {
-			return err
+			return fmt.Errorf("parsing duration: %w", err)
 		}
 		durs = append(durs, d)
 	}
-	*sd = SliceOfDuration(durs)
+	*s.value = durs
 	return nil
 }
 
-func (sd *SliceOfDuration) String() string {
-	if sd == nil {
-		return ""
-	}
-	res := make([]string, len(*sd))
-	for i, v := range *sd {
+// String implements the flag.Value interface.
+func (s durationSlice) String() string {
+	res := make([]string, len(*s.value))
+	for i, v := range *s.value {
 		res[i] = v.String()
 	}
-	return strings.Join(res, ",")
+	return strings.Join(res, s.sep)
 }

@@ -18,7 +18,7 @@ func TestFlagSet(t *testing.T) {
 
 	fset := NewFlagSet("testing", os.Stderr)
 	fset.Duration(&d, "timeout", "t", 10*time.Second, "just a timeout")
-	fset.IntSlice(&ids, "ids", "", wantIDs, "just a timeout")
+	fset.IntSlice(&ids, "ids", "", wantIDs, ",", "just a timeout")
 	fset.Float64Set(&offsets, "offsets", "", wantOffsets, "just a timeout")
 
 	names := map[string]struct{}{}

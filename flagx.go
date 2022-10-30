@@ -96,11 +96,7 @@ func (f *FlagSet) Func(name, alias, usage string, fn func(string) error) {
 // Empty string for alias means no alias will be created.
 func (f *FlagSet) Text(p encoding.TextUnmarshaler, name, alias string, value encoding.TextMarshaler, usage string) {
 	// TODO(cristaloleg): for Go 1.19 this can be f.fs.TextVar(...)
-	f.aliases[name] = alias
-	f.fs.Var(newTextValue(value, p), name, usage)
-	if alias != "" {
-		f.fs.Var(newTextValue(value, p), alias, usage)
-	}
+	f.Var(newTextValue(value, p), name, alias, usage)
 }
 
 // Bool defines a bool flag with specified name, alias, default value, and usage string.
@@ -192,109 +188,77 @@ func (f *FlagSet) Duration(p *time.Duration, name, alias string, value time.Dura
 	}
 }
 
-// BoolSlice defines a slice of bool flag with specified name, alias, default value, and usage string.
+// BoolSlice defines a slice of bool flag with specified name, alias, default value, separator, and usage string.
 // The argument p points to a bool variable in which to store the value of the flag.
 // Empty string for alias means no alias will be created.
-func (f *FlagSet) BoolSlice(p *[]bool, name, alias string, value []bool, usage string) {
-	f.aliases[name] = alias
-	var sb SliceOfBool
-	*p = []bool(sb)
-	f.fs.Var(&sb, name, usage)
-	if alias != "" {
-		f.fs.Var(&sb, alias, usage)
-	}
+func (f *FlagSet) BoolSlice(p *[]bool, name, alias string, value []bool, sep, usage string) {
+	*p = value
+	s := boolSlice{sep: sep, value: p}
+	f.Var(s, name, alias, usage)
 }
 
-// IntSlice defines a slice of int flag with specified name, alias, default value, and usage string.
+// IntSlice defines a slice of int flag with specified name, alias, default value, separator, and usage string.
 // The argument p points to an int variable in which to store the value of the flag.
 // Empty string for alias means no alias will be created.
-func (f *FlagSet) IntSlice(p *[]int, name, alias string, value []int, usage string) {
-	f.aliases[name] = alias
-	var si SliceOfInt = value
-	*p = []int(si)
-	f.fs.Var(&si, name, usage)
-	if alias != "" {
-		f.fs.Var(&si, alias, usage)
-	}
+func (f *FlagSet) IntSlice(p *[]int, name, alias string, value []int, sep, usage string) {
+	*p = value
+	s := intSlice{sep: sep, value: p}
+	f.Var(s, name, alias, usage)
 }
 
-// Int64Slice defines a slice of int64 flag with specified name, alias, default value, and usage string.
+// Int64Slice defines a slice of int64 flag with specified name, alias, default value, separator, and usage string.
 // The argument p points to an int64 variable in which to store the value of the flag.
 // Empty string for alias means no alias will be created.
-func (f *FlagSet) Int64Slice(p *[]int64, name, alias string, value []int64, usage string) {
-	f.aliases[name] = alias
-	var si SliceOfInt64 = value
-	*p = []int64(si)
-	f.fs.Var(&si, name, usage)
-	if alias != "" {
-		f.fs.Var(&si, alias, usage)
-	}
+func (f *FlagSet) Int64Slice(p *[]int64, name, alias string, value []int64, sep, usage string) {
+	*p = value
+	s := int64Slice{sep: sep, value: p}
+	f.Var(s, name, alias, usage)
 }
 
-// UintSlice defines a slice of uint flag with specified name, alias, default value, and usage string.
+// UintSlice defines a slice of uint flag with specified name, alias, default value, separator, and usage string.
 // The argument p points to a uint variable in which to store the value of the flag.
 // Empty string for alias means no alias will be created.
-func (f *FlagSet) UintSlice(p *[]uint, name, alias string, value []uint, usage string) {
-	f.aliases[name] = alias
-	var su SliceOfUint = value
-	*p = []uint(su)
-	f.fs.Var(&su, name, usage)
-	if alias != "" {
-		f.fs.Var(&su, alias, usage)
-	}
+func (f *FlagSet) UintSlice(p *[]uint, name, alias string, value []uint, sep, usage string) {
+	*p = value
+	s := uintSlice{sep: sep, value: p}
+	f.Var(s, name, alias, usage)
 }
 
-// Uint64Slice defines a slice of uint64 flag with specified name, alias, default value, and usage string.
+// Uint64Slice defines a slice of uint64 flag with specified name, alias, default value, separator, and usage string.
 // The argument p points to a uint64 variable in which to store the value of the flag.
 // Empty string for alias means no alias will be created.
-func (f *FlagSet) Uint64Slice(p *[]uint64, name, alias string, value []uint64, usage string) {
-	f.aliases[name] = alias
-	var su SliceOfUint64 = value
-	*p = []uint64(su)
-	f.fs.Var(&su, name, usage)
-	if alias != "" {
-		f.fs.Var(&su, alias, usage)
-	}
+func (f *FlagSet) Uint64Slice(p *[]uint64, name, alias string, value []uint64, sep, usage string) {
+	*p = value
+	s := uint64Slice{sep: sep, value: p}
+	f.Var(s, name, alias, usage)
 }
 
-// StringSlice defines a slice of string flag with specified name, alias, default value, and usage string.
+// StringSlice defines a slice of string flag with specified name, alias, default value, separator, and usage string.
 // The argument p points to a string variable in which to store the value of the flag.
 // Empty string for alias means no alias will be created.
-func (f *FlagSet) StringSlice(p *[]string, name, alias string, value []string, usage string) {
-	f.aliases[name] = alias
-	var ss SliceOfString = value
-	*p = []string(ss)
-	f.fs.Var(&ss, name, usage)
-	if alias != "" {
-		f.fs.Var(&ss, alias, usage)
-	}
+func (f *FlagSet) StringSlice(p *[]string, name, alias string, value []string, sep, usage string) {
+	*p = value
+	s := stringSlice{sep: sep, value: p}
+	f.Var(s, name, alias, usage)
 }
 
-// Float64Slice defines a slice of float64 flag with specified name, alias, default value, and usage string.
+// Float64Slice defines a slice of float64 flag with specified name, alias, default value, separator, and usage string.
 // The argument p points to a float64 variable in which to store the value of the flag.
 // Empty string for alias means no alias will be created.
-func (f *FlagSet) Float64Slice(p *[]float64, name, alias string, value []float64, usage string) {
-	f.aliases[name] = alias
-	var sf SliceOfFloat64 = value
-	*p = []float64(sf)
-	f.fs.Var(&sf, name, usage)
-	if alias != "" {
-		f.fs.Var(&sf, alias, usage)
-	}
+func (f *FlagSet) Float64Slice(p *[]float64, name, alias string, value []float64, sep, usage string) {
+	*p = value
+	s := float64Slice{sep: sep, value: p}
+	f.Var(s, name, alias, usage)
 }
 
-// DurationSlice defines a slice of time.Duration flag with specified name, alias, default value, and usage string.
+// DurationSlice defines a slice of time.Duration flag with specified name, alias, default value, separator, and usage string.
 // The argument p points to a time.Duration variable in which to store the value of the flag.
 // The flag accepts a value acceptable to time.ParseDuration.
 // Empty string for alias means no alias will be created.
-func (f *FlagSet) DurationSlice(p *[]time.Duration, name, alias string, value []time.Duration, usage string) {
-	f.aliases[name] = alias
-	var sd SliceOfDuration = value
-	*p = []time.Duration(sd)
-	f.fs.Var(&sd, name, usage)
-	if alias != "" {
-		f.fs.Var(&sd, alias, usage)
-	}
+func (f *FlagSet) DurationSlice(p *[]time.Duration, name, alias string, value []time.Duration, sep, usage string) {
+	*p = value
+	s := durationSlice{sep: sep, value: p}
+	f.Var(s, name, alias, usage)
 }
 
 // IntSet defines a set of int flag with specified name, alias, default value, and usage string.
