@@ -191,7 +191,9 @@ func (f *FlagSet) Duration(p *time.Duration, name, alias string, value time.Dura
 // BoolSlice defines a slice of bool flag with specified name, alias, default value, separator, and usage string.
 // The argument p points to a bool variable in which to store the value of the flag.
 // Empty string for alias means no alias will be created.
+// BoolSlice panics on empty separator.
 func (f *FlagSet) BoolSlice(p *[]bool, name, alias string, value []bool, sep, usage string) {
+	panicIfEmpty(sep)
 	*p = value
 	s := boolSlice{sep: sep, value: p}
 	f.Var(s, name, alias, usage)
@@ -200,7 +202,9 @@ func (f *FlagSet) BoolSlice(p *[]bool, name, alias string, value []bool, sep, us
 // IntSlice defines a slice of int flag with specified name, alias, default value, separator, and usage string.
 // The argument p points to an int variable in which to store the value of the flag.
 // Empty string for alias means no alias will be created.
+// IntSlice panics on empty separator.
 func (f *FlagSet) IntSlice(p *[]int, name, alias string, value []int, sep, usage string) {
+	panicIfEmpty(sep)
 	*p = value
 	s := intSlice{sep: sep, value: p}
 	f.Var(s, name, alias, usage)
@@ -209,7 +213,9 @@ func (f *FlagSet) IntSlice(p *[]int, name, alias string, value []int, sep, usage
 // Int64Slice defines a slice of int64 flag with specified name, alias, default value, separator, and usage string.
 // The argument p points to an int64 variable in which to store the value of the flag.
 // Empty string for alias means no alias will be created.
+// Int64Slice panics on empty separator.
 func (f *FlagSet) Int64Slice(p *[]int64, name, alias string, value []int64, sep, usage string) {
+	panicIfEmpty(sep)
 	*p = value
 	s := int64Slice{sep: sep, value: p}
 	f.Var(s, name, alias, usage)
@@ -218,7 +224,9 @@ func (f *FlagSet) Int64Slice(p *[]int64, name, alias string, value []int64, sep,
 // UintSlice defines a slice of uint flag with specified name, alias, default value, separator, and usage string.
 // The argument p points to a uint variable in which to store the value of the flag.
 // Empty string for alias means no alias will be created.
+// UintSlice panics on empty separator.
 func (f *FlagSet) UintSlice(p *[]uint, name, alias string, value []uint, sep, usage string) {
+	panicIfEmpty(sep)
 	*p = value
 	s := uintSlice{sep: sep, value: p}
 	f.Var(s, name, alias, usage)
@@ -227,7 +235,9 @@ func (f *FlagSet) UintSlice(p *[]uint, name, alias string, value []uint, sep, us
 // Uint64Slice defines a slice of uint64 flag with specified name, alias, default value, separator, and usage string.
 // The argument p points to a uint64 variable in which to store the value of the flag.
 // Empty string for alias means no alias will be created.
+// Uint64Slice panics on empty separator.
 func (f *FlagSet) Uint64Slice(p *[]uint64, name, alias string, value []uint64, sep, usage string) {
+	panicIfEmpty(sep)
 	*p = value
 	s := uint64Slice{sep: sep, value: p}
 	f.Var(s, name, alias, usage)
@@ -236,7 +246,9 @@ func (f *FlagSet) Uint64Slice(p *[]uint64, name, alias string, value []uint64, s
 // StringSlice defines a slice of string flag with specified name, alias, default value, separator, and usage string.
 // The argument p points to a string variable in which to store the value of the flag.
 // Empty string for alias means no alias will be created.
+// StringSlice panics on empty separator.
 func (f *FlagSet) StringSlice(p *[]string, name, alias string, value []string, sep, usage string) {
+	panicIfEmpty(sep)
 	*p = value
 	s := stringSlice{sep: sep, value: p}
 	f.Var(s, name, alias, usage)
@@ -245,7 +257,9 @@ func (f *FlagSet) StringSlice(p *[]string, name, alias string, value []string, s
 // Float64Slice defines a slice of float64 flag with specified name, alias, default value, separator, and usage string.
 // The argument p points to a float64 variable in which to store the value of the flag.
 // Empty string for alias means no alias will be created.
+// Float64Slice panics on empty separator.
 func (f *FlagSet) Float64Slice(p *[]float64, name, alias string, value []float64, sep, usage string) {
+	panicIfEmpty(sep)
 	*p = value
 	s := float64Slice{sep: sep, value: p}
 	f.Var(s, name, alias, usage)
@@ -255,7 +269,9 @@ func (f *FlagSet) Float64Slice(p *[]float64, name, alias string, value []float64
 // The argument p points to a time.Duration variable in which to store the value of the flag.
 // The flag accepts a value acceptable to time.ParseDuration.
 // Empty string for alias means no alias will be created.
+// DurationSlice panics on empty separator.
 func (f *FlagSet) DurationSlice(p *[]time.Duration, name, alias string, value []time.Duration, sep, usage string) {
+	panicIfEmpty(sep)
 	*p = value
 	s := durationSlice{sep: sep, value: p}
 	f.Var(s, name, alias, usage)
@@ -436,4 +452,11 @@ func isZeroValue(fl *flag.Flag, value string) (ok bool, err error) {
 		}
 	}()
 	return value == z.Interface().(flag.Value).String(), nil
+}
+
+// panicIfEmpty makes sure the provided slice separator is not empty.
+func panicIfEmpty(sep string) {
+	if sep == "" {
+		panic("flagx: slice separator must not be empty")
+	}
 }
