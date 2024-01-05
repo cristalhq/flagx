@@ -6,9 +6,14 @@ import (
 	"fmt"
 	"io"
 	"reflect"
+	"regexp"
 	"strings"
 	"time"
 )
+
+type Value = flag.Value
+
+type Getter = flag.Getter
 
 // FlagSet represents a set of flags.
 // Flag names must be unique within a FlagSet.
@@ -29,32 +34,14 @@ func NewFlagSet(name string, output io.Writer) *FlagSet {
 }
 
 // AsStdlib returns *flag.FlagSet with all flags.
-// Note: alias are duplicated.
-func (f *FlagSet) AsStdlib() *flag.FlagSet {
-	return f.fs
-}
+// Note: aliases are duplicated.
+func (f *FlagSet) AsStdlib() *flag.FlagSet { return f.fs }
 
-// NFlag returns the number of flags that have been set.
-func (f *FlagSet) NFlag() int { return f.fs.NFlag() }
-
-// NArg is the number of arguments remaining after flags have been processed.
-func (f *FlagSet) NArg() int { return f.fs.NArg() }
-
-// Arg returns the i'th argument. Arg(0) is the first remaining argument
-// after flags have been processed. Arg returns an empty string if the
-// requested element does not exist.
-func (f *FlagSet) Arg(i int) string { return f.fs.Arg(i) }
-
-// Args returns the non-flag arguments.
-func (f *FlagSet) Args() []string { return f.fs.Args() }
-
-// IsParsed reports whether f.Parse has been called.
-func (f *FlagSet) IsParsed() bool { return f.fs.Parsed() }
-
-// Parse parses flag definitions from the argument list, which should not
-// include the command name. Must be called after all flags in the FlagSet
-// are defined and before flags are accessed by the program.
-// The return value will be ErrHelp if -help or -h were set but not defined.
+func (f *FlagSet) NFlag() int                     { return f.fs.NFlag() }
+func (f *FlagSet) NArg() int                      { return f.fs.NArg() }
+func (f *FlagSet) Arg(i int) string               { return f.fs.Arg(i) }
+func (f *FlagSet) Args() []string                 { return f.fs.Args() }
+func (f *FlagSet) IsParsed() bool                 { return f.fs.Parsed() }
 func (f *FlagSet) Parse(arguments []string) error { return f.fs.Parse(arguments) }
 func (f *FlagSet) VisitAll(fn func(*flag.Flag))   { f.fs.VisitAll(fn) }
 func (f *FlagSet) Visit(fn func(*flag.Flag))      { f.fs.Visit(fn) }
@@ -189,6 +176,20 @@ func (f *FlagSet) Duration(p *time.Duration, name, alias string, value time.Dura
 }
 
 // BoolSlice defines a slice of bool flag with specified name, alias, default value, separator, and usage string.
+// Duration defines a time.Duration flag with specified name, alias, default value, and usage string.
+// The argument p points to a time.Duration variable in which to store the value of the flag.
+// The flag accepts a value acceptable to time.ParseDuration.
+// Empty string for alias means no alias will be created.
+// Until https://github.com/golang/go/issues/46159 is implemented.
+func (f *FlagSet) Regexp(p *regexp.Regexp, name, alias string, value string, usage string) {
+	// def := time.ParseDuration(value)
+	// f.fs.DurationVar(p, name, value, usage)
+	// if alias != "" {
+	// 	f.fs.DurationVar(p, alias, value, usage)
+	// }
+}
+
+// BoolSlice defines a slice of bool flag with specified name, alias, default value, and usage string.
 // The argument p points to a bool variable in which to store the value of the flag.
 // Empty string for alias means no alias will be created.
 // BoolSlice panics on empty separator.

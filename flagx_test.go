@@ -46,16 +46,16 @@ func TestFlagSet_PrintDefaults(t *testing.T) {
 	mustEqual(t, buf.String(), usage)
 }
 
-func failIfErr(t testing.TB, err error) {
-	t.Helper()
+func failIfErr(tb testing.TB, err error) {
+	tb.Helper()
 	if err != nil {
-		t.Fatal(err)
+		tb.Fatal(err)
 	}
 }
 
-func mustEqual(t testing.TB, got, want interface{}) {
-	t.Helper()
-	if !reflect.DeepEqual(got, want) {
-		t.Fatalf("got %v, want %v", got, want)
+func mustEqual(tb testing.TB, have, want interface{}) {
+	tb.Helper()
+	if !reflect.DeepEqual(have, want) {
+		tb.Fatalf("\nhave: %v\nwant: %v", have, want)
 	}
 }
