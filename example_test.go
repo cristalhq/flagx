@@ -26,7 +26,7 @@ func ExampleFlagSet() {
 	// Output: 20s
 }
 
-func ExampleTextVar() {
+func Example_textVar() {
 	fs := flagx.NewFlagSet("ExampleTextVar", os.Stdout)
 
 	var ip net.IP
